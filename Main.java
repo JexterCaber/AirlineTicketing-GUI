@@ -20,11 +20,16 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.util.Random;
+
 
 public class Main extends Application {
 
     Stage window;
     Scene scene1, scene2;
+
+    String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    Random rng = new Random();
 
     static String[] ageArray;
 
@@ -32,6 +37,15 @@ public class Main extends Application {
         launch(args);
     }
 
+    public static String generateString(Random rng, String characters, int length)
+    {
+        char[] text = new char[length];
+        for (int i = 0; i < length; i++)
+        {
+            text[i] = characters.charAt(rng.nextInt(characters.length()));
+        }
+        return new String(text);
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -78,12 +92,11 @@ public class Main extends Application {
         scene2 = new Scene(root2,500,500);
 
         //INITIALIZE LABELS
-        Label rgc = new Label("HOLDER");
+        Label rgc = new Label(generateString(rng,characters,5));
         Label firstName = new Label("First Name:");
         Label lastName = new Label("Last Name:");
         Label age = new Label("Age");
         Label aptLabel = new Label("Airplane Type");
-        Label travelinsurance = new Label("Travel Insurance");
 
         rgc.setFont(f);
         firstName.setFont(f);
@@ -111,7 +124,7 @@ public class Main extends Application {
         agebox.getChildren().addAll(age,c);
 
         //CREATE CHOICEBOX FOR AIRPLANE TYPE
-        String[] airplaneType = {"Private - Php 4,260","Business - Php 5,700","Regular - 2,500"};
+        String[] airplaneType = {"Private","Business","Regular"};
         ChoiceBox<String> apT = new ChoiceBox<String>(FXCollections.observableArrayList(airplaneType));
 
         //VBOX FOR APT AND CB
@@ -139,8 +152,9 @@ public class Main extends Application {
         Button nextButton = new Button("Next");
         nextButton.setFont(f);
         Button confirmButton = new Button("Confirm");
-        confirmButton.setFont(Font.font("Poppins", FontWeight.BOLD,20));
-        confirmButton.setMinSize(50,30);
+        confirmButton.setFont(f);
+        //confirmButton.setFont(Font.font("Poppins", FontWeight.BOLD,20));
+        //confirmButton.setMinSize(50,30);
 
         //HBOX FOR BUTTON
         HBox buttonHbox = new HBox();
@@ -159,13 +173,25 @@ public class Main extends Application {
 
         //CREATE PARENT VBOX
         VBox parentVbox = new VBox();
-        vbox.setPadding(new Insets(5));
-        vbox.setSpacing(5);
+        parentVbox.setPadding(new Insets(5));
+        parentVbox.setSpacing(5);
 
         parentVbox.getChildren().addAll(vbox,hbox);
         parentVbox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY,BorderWidths.DEFAULT)));
 
-        root2.setTop(parentVbox);
+        VBox leftArea = new VBox();
+        VBox rightArea = new VBox();
+
+        //CREATE HBOX TO ADD MARGIN
+        HBox parentHbox = new HBox();
+        parentHbox.getChildren().addAll(leftArea,parentVbox,rightArea);
+        parentHbox.setAlignment(Pos.CENTER);
+
+        HBox.setMargin(leftArea, new Insets(20,0,10,10));
+        HBox.setMargin(parentVbox, new Insets(20,10,10,10));
+        HBox.setMargin(rightArea, new Insets(20,10,10,0));
+
+        root2.setTop(parentHbox);
         root2.setCenter(buttonHbox);
         root2.setBackground(Background.fill(Color.rgb(0,180,216)));
 
